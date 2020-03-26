@@ -1,0 +1,45 @@
+/* for ejsImageGallery.js */
+.ejs-img-gallery {
+    margin-bottom: 1rem;
+
+    &__list {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        overflow-x: auto;
+    }
+
+    &__list-item {
+        list-style: none;
+        position: relative;
+    }
+
+    &__delete-icon {
+        position: absolute;
+        top: .25rem;
+        right: .25rem;
+
+        padding: .25rem .5rem;
+        font-size: 1.5rem;
+        line-height: 1.5rem;
+        font-weight: bold;
+        background-color: crimson;
+        color: white;
+
+        display: inline-block;
+        cursor: pointer;
+        border-radius: .125rem;
+    }
+
+    &__thumb {
+        margin: 1px;
+        width: 148px;
+        height: 148px;
+        object-fit: cover;
+        display: inline-block;
+    }
+
+    &__url-ip {
+        margin-right: .25rem;
+    }
+}
