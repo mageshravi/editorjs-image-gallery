@@ -7,12 +7,12 @@ class ImageGallery {
         this.data = data;
         this.wrapper = undefined;
         this.cssClassnames = {
-            wrapper: 'm-img-gallery',
-            imageList: 'm-img-gallery__list',
-            imageListItem: 'm-img-gallery__list-item',
-            thumb: 'm-img-gallery__thumb',
-            deleteIcon: 'm-img-gallery__delete-icon',
-            urlIp: 'm-img-gallery__url-ip'
+            wrapper: 'ejs-img-gallery',
+            imageList: 'ejs-img-gallery__list',
+            imageListItem: 'ejs-img-gallery__list-item',
+            thumb: 'ejs-img-gallery__thumb',
+            deleteIcon: 'ejs-img-gallery__delete-icon',
+            urlIp: 'ejs-img-gallery__url-ip'
         }
     }
 

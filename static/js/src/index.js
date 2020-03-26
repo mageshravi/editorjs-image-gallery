@@ -1,6 +1,6 @@
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
-import ImageGallery from './galleryTool';
+import ImageGallery from './ejsImageGallery';
 
 const editor = new EditorJS({
     holder: 'codex-editor',
