@@ -7,12 +7,17 @@
     <link rel="stylesheet" href="./static/css/dist/style.css">
 </head>
 <body>
-    <div style="margin: 0 auto; max-width: 650px">
+    <form id="my-form" action="" style="margin: 0 auto; max-width: 650px;">
+        <div>
+            <label for="name">Name</label>
+            <input name="name" type="text">
+        </div>
         <div id="codex-editor"></div>
-        <button id="my-btn" type="button">Save</button><br>
-        <br>
         <textarea name="codex_editor_output" id="codex-editor-textarea" cols="80" rows="10"></textarea>
-        <script type="text/javascript" src="./static/js/dist/index.js"></script>
-    </div>
+        <br>
+        <button type="submit">Save</button><br>
+    </form>
+
+    <script type="text/javascript" src="./static/js/dist/withinForm.js"></script>
 </body>
 </html>

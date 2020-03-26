@@ -49,9 +49,11 @@ const editor = new EditorJS({
 });
 
 const textarea = document.querySelector('#codex-editor-textarea');
-const myBtn = document.querySelector('#my-btn');
+const myForm = document.querySelector('#my-form');
 
-myBtn.addEventListener('click', () => {
+// do NOT use addEventListener('submit')
+// use 'onsubmit' so that this will be the only event handler
+myForm.onsubmit = () => {
     editor.save()
         .then((outputData) => {
             textarea.value = JSON.stringify(outputData);
@@ -59,4 +61,10 @@ myBtn.addEventListener('click', () => {
         .catch((err) => {
             console.error(err);
         });
-});
+
+    if (myForm.querySelector('input[type=text]').value == 'fail') {
+        return false;
+    }
+
+    return true;
+}

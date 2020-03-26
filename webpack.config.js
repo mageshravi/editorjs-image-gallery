@@ -4,6 +4,7 @@ module.exports = {
     entry: {
         gallery: './static/js/src/galleryTool.js',
         index: './static/js/src/index.js',
+        withinForm: './static/js/src/withinForm.js',
     },
     output: {
         filename: '[name].js',
