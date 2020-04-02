@@ -30,7 +30,7 @@ loadBtn.addEventListener('click', () => {
             console.log('Data loaded successfully');
         })
         .catch((err) => {
-            console.err('Error loading data:', err);
+            console.error('Error loading data:', err);
         })
 })
 
