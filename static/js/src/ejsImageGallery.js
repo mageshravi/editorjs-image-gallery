@@ -103,12 +103,6 @@ class ImageGallery {
     }
 
     _isValidImageUrl(url) {
-        // check if url starts with http or https
-        const isValidUrl = /^(http|https):\/\/[^ "]+$/.test(url)
-        if (!isValidUrl) {
-            return false;
-        }
-
         // check if image can load
         return new Promise((resolve, reject) => {
             const img = new Image();
