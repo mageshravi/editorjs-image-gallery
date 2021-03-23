@@ -1,6 +1,7 @@
 /**
  * ImageGallery block element for EditorJS
  */
+
 class ImageGallery {
 
     constructor({ data }) {
@@ -57,7 +58,7 @@ class ImageGallery {
 
     save(blockContent) {
         const imgs = blockContent.querySelectorAll(`.${this.cssClassnames.thumb}`);
-
+        
         const imageUrls = [];
         imgs.forEach((img) => {
             const itemData = {}
@@ -100,7 +101,7 @@ class ImageGallery {
                 })
 
         } else {
-           this._appendMedia(addButton, wrapper, input.value)
+            this._appendMedia(addButton, wrapper, input.value)
         }
     }
 
@@ -108,23 +109,23 @@ class ImageGallery {
         const input = wrapper.querySelector(`.${this.cssClassnames.urlIp}`);
         const self = this;
         this._isValidImageUrl(url)
-                .then((src) => {
-                    const li = self._createThumbnailListItem(src, youtubeVideoId);
+            .then((src) => {
+                const li = self._createThumbnailListItem(src, youtubeVideoId);
 
-                    const ul = wrapper.querySelector(`.${self.cssClassnames.imageList}`);
-                    ul.appendChild(li);
+                const ul = wrapper.querySelector(`.${self.cssClassnames.imageList}`);
+                ul.appendChild(li);
 
-                    // clear input
-                    input.value = '';
-                })
-                .catch((err) => {
-                    alert(err);
-                })
-                .finally(() => {
-                    // re-enable input and button
-                    input.removeAttribute('disabled');
-                    addButton.removeAttribute('disabled');
-                });
+                // clear input
+                input.value = '';
+            })
+            .catch((err) => {
+                alert(err);
+            })
+            .finally(() => {
+                // re-enable input and button
+                input.removeAttribute('disabled');
+                addButton.removeAttribute('disabled');
+            });
     }
 
     _parseVideoId(url) {
@@ -208,7 +209,7 @@ class ImageGallery {
                 // insert after the dropped element
                 draggedLi.parentElement.insertBefore(draggedLi, ev.currentTarget.nextSibling);
             }
-            
+
             if (droppedLiIndex < draggedLiIndex) {
                 // insert before the dropped element
                 draggedLi.parentElement.insertBefore(draggedLi, ev.currentTarget);
