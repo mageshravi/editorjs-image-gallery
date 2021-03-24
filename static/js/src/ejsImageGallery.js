@@ -136,6 +136,7 @@ class ImageGallery {
             const a = document.createElement('a')
             a.href = url
 
+            // eg http://youtu.be/-wtIMTCHWuI ; http://youtu.be/dQw4w9WgXcQ?feature=youtube_gdata_player
             if (a.hostname === 'youtu.be') {
                 videoId = a.pathname.substr(1, a.pathname.length)
                 resolve(videoId)
@@ -143,7 +144,9 @@ class ImageGallery {
                 return
             }
 
-            videoId = a.search.substr(3, a.search.length)
+            // for generic urls eg:- http://www.youtube.com/watch?v=-wtIMTCHWuI
+            const queryString = new URLSearchParams(a.search)
+            const videoId = queryString.get('v')
             resolve(videoId)
         })
     }
