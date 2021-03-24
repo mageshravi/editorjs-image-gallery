@@ -58,12 +58,12 @@ class ImageGallery {
 
     save(blockContent) {
         const imgs = blockContent.querySelectorAll(`.${this.cssClassnames.thumb}`);
-        
+
         const imageUrls = [];
         imgs.forEach((img) => {
             const itemData = {}
-            if (img.dataset.videoid) {
-                itemData.youtubeVideoId = img.dataset.videoid
+            if (img.dataset.videoId) {
+                itemData.youtubeVideoId = img.dataset.videoId
             }
 
             itemData.url = img.getAttribute('src')
@@ -88,11 +88,10 @@ class ImageGallery {
         input.setAttribute('disabled', true);
         addButton.setAttribute('disabled', true);
 
-        const regexPattern = new RegExp('^(https:\/\/)(www\.)?((youtube\.com)|(youtu.be))\/', 'g');
-
-        if (regexPattern.test(input.value) === true) {
+        const regexPattern = new RegExp('^(http|https)(:\/\/)(www\.)?((youtube\.com)|(youtu.be))\/', 'g')
+        if (regexPattern.test(input.value.trim()) === true) {
             const self = this;
-            const videoUrl = input.value;
+            const videoUrl = input.value.trim();
 
             this._parseVideoId(videoUrl)
                 .then(youtubeVideoId => {
@@ -100,9 +99,11 @@ class ImageGallery {
                     self._appendMedia(addButton, wrapper, videoThumbnailUrl, youtubeVideoId);
                 })
 
-        } else {
-            this._appendMedia(addButton, wrapper, input.value)
+            return
         }
+
+        this._appendMedia(addButton, wrapper, input.value.trim())
+
     }
 
     _appendMedia(addButton, wrapper, url, youtubeVideoId) {
@@ -129,31 +130,21 @@ class ImageGallery {
     }
 
     _parseVideoId(url) {
+        let videoId = null
+
         return new Promise((resolve, _) => {
-            let urlParts;
-            let urlSubParts;
-            let id;
+            const a = document.createElement('a')
+            a.href = url
 
-            switch (true) {
-                //eg http://youtu.be/dQw4w9WgXcQ?feature=youtube_gdata_player
-                case (url.indexOf('?' > -1) && url.indexOf('v=') === -1):
-                    urlParts = url.split('?')
-                    urlSubParts = urlParts[0].split('/')
-                    id = urlSubParts[urlSubParts.length - 1]
-                    resolve(id)
-                    break;
+            if (a.hostname === 'youtu.be') {
+                videoId = a.pathname.substr(1, a.pathname.length)
+                resolve(videoId)
 
-                // eg http://youtu.be/-wtIMTCHWuI
-                case (url.indexOf('?') === -1 && url.indexOf('v=') === -1):
-                    urlParts = url.split('/')
-                    id = urlParts[urlParts.length - 1]
-                    resolve(id)
-                    break;
-
-                // eg http://www.youtube.com/watch?v=-wtIMTCHWuI
-                default:
-                    resolve(url.split('v=')[1])
+                return
             }
+
+            videoId = a.search.substr(3, a.search.length)
+            resolve(videoId)
         })
     }
 
@@ -174,7 +165,7 @@ class ImageGallery {
         img.setAttribute('src', thumbSrc);
 
         if (youtubeVideoId) {
-            img.setAttribute('data-videoid', youtubeVideoId)
+            img.setAttribute('data-video-id', youtubeVideoId)
         }
 
         // delete-icon

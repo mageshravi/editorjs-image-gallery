@@ -1,5 +1,5 @@
 # folders
 node_modules
-/static/css/dist/*
-/static/js/dist/*
+static/css/dist/
+static/js/dist/
 # files
