@@ -73,16 +73,16 @@ class ImageGallery {
             'https://youtu.be/dQw4w9WgXcQ?feature=youtube_gdata_player'
         ]
 
-        supportedUrlFormats.forEach((url, idx)=> {
+        supportedUrlFormats.forEach((url, idx) => {
             const urlExample = document.createElement('p');
             urlExample.classList = this.cssClassnames.urlExample;
-            urlExample.innerText = `${idx+1}. ${url}`;
+            urlExample.innerText = `${idx + 1}. ${url}`;
             infoWrapper.appendChild(urlExample)
         });
 
-        infoText.addEventListener('click', ()=> {
+        infoText.addEventListener('click', () => {
             const urlExamples = document.querySelectorAll(`.${this.cssClassnames.urlExample}`);
-            urlExamples.forEach(url=> {
+            urlExamples.forEach(url => {
                 url.classList.toggle(`show`);
             })
         })
@@ -138,7 +138,12 @@ class ImageGallery {
                     self._appendMedia(addButton, wrapper, videoThumbnailUrl, youtubeVideoId);
                 })
                 .catch((e) => {
-                    console.log(e)
+                    const urlExamples = document.querySelectorAll(`.${this.cssClassnames.urlExample}`);
+                    urlExamples.forEach(url => {
+                        url.classList.toggle(`show`);
+                    })
+
+                    alert(e)
                     input.removeAttribute('disabled');
                     addButton.removeAttribute('disabled');
                 })
@@ -192,7 +197,7 @@ class ImageGallery {
 
             // eg urls like http://www.youtube.com/watch?foo=bar
             if (!videoId) {
-                return reject(new Error('This URL format is not recognized by the plugin! Please try with another URL.'))
+                return reject(new Error('Your YouTube URL is invalid. Please check the supported formats.'))
             }
 
             resolve(videoId)
