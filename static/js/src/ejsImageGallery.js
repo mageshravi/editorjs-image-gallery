@@ -95,6 +95,11 @@ class ImageGallery {
 
             this._parseVideoId(videoUrl)
                 .then(youtubeVideoId => {
+                    if (!youtubeVideoId) {
+                        input.removeAttribute('disabled');
+                        addButton.removeAttribute('disabled');
+                        return
+                    }
                     const videoThumbnailUrl = `https://img.youtube.com/vi/${youtubeVideoId}/mqdefault.jpg`
                     self._appendMedia(addButton, wrapper, videoThumbnailUrl, youtubeVideoId);
                 })
@@ -132,21 +137,25 @@ class ImageGallery {
     _parseVideoId(url) {
         let videoId = null
 
-        return new Promise((resolve, _) => {
+        return new Promise((resolve, reject) => {
             const a = document.createElement('a')
             a.href = url
 
             // eg http://youtu.be/-wtIMTCHWuI ; http://youtu.be/dQw4w9WgXcQ?feature=youtube_gdata_player
             if (a.hostname === 'youtu.be') {
                 videoId = a.pathname.substr(1, a.pathname.length)
-                resolve(videoId)
-
-                return
+                return resolve(videoId)
             }
 
             // for generic urls eg:- http://www.youtube.com/watch?v=-wtIMTCHWuI
             const queryString = new URLSearchParams(a.search)
-            const videoId = queryString.get('v')
+            videoId = queryString.get('v')
+
+            // eg urls like http://www.youtube.com/watch?foo=bar
+            if (!videoId) {
+                return reject(new Error('This URL format is not recognized by the plugin! Please try with another URL.'))
+            }
+
             resolve(videoId)
         })
     }
