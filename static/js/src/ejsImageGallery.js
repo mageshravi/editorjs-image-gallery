@@ -13,7 +13,11 @@ class ImageGallery {
             imageListItem: 'ejs-img-gallery__list-item',
             thumb: 'ejs-img-gallery__thumb',
             deleteIcon: 'ejs-img-gallery__delete-icon',
-            urlIp: 'ejs-img-gallery__url-ip'
+            urlIp: 'ejs-img-gallery__url-ip',
+            infoWrapper: 'ejs-img-gallery__info-wrapper',
+            infoIcon: 'ejs-img-gallery__info-icon',
+            infoText: 'ejs-img-gallery__info-text',
+            urlExample: 'ejs-img-gallery__url-example'
         }
     }
 
@@ -49,9 +53,44 @@ class ImageGallery {
         button.innerHTML = 'Add to Gallery';
         button.addEventListener('click', self._addImg.bind(self));
 
+        const infoWrapper = document.createElement('div');
+        infoWrapper.classList = this.cssClassnames.infoWrapper;
+
+        const infoIcon = document.createElement('img');
+        infoIcon.setAttribute('src', 'static/icons/info-icon.svg');
+        infoIcon.classList = this.cssClassnames.infoIcon;
+
+        const infoText = document.createElement('span');
+        infoText.innerText = 'Supported URL Formats';
+        infoText.classList = this.cssClassnames.infoText;
+
+        infoWrapper.appendChild(infoIcon);
+        infoWrapper.appendChild(infoText);
+
+        const supportedUrlFormats = [
+            'https://www.youtube.com/watch?v=-wtIMTCHWuI',
+            'https://youtu.be/-wtIMTCHWuI',
+            'https://youtu.be/dQw4w9WgXcQ?feature=youtube_gdata_player'
+        ]
+
+        supportedUrlFormats.forEach((url, idx)=> {
+            const urlExample = document.createElement('p');
+            urlExample.classList = this.cssClassnames.urlExample;
+            urlExample.innerText = `${idx+1}. ${url}`;
+            infoWrapper.appendChild(urlExample)
+        });
+
+        infoText.addEventListener('click', ()=> {
+            const urlExamples = document.querySelectorAll(`.${this.cssClassnames.urlExample}`);
+            urlExamples.forEach(url=> {
+                url.classList.toggle(`show`);
+            })
+        })
+
         this.wrapper.appendChild(images);
         this.wrapper.appendChild(input);
         this.wrapper.appendChild(button);
+        this.wrapper.appendChild(infoWrapper);
 
         return this.wrapper;
     }
@@ -95,13 +134,13 @@ class ImageGallery {
 
             this._parseVideoId(videoUrl)
                 .then(youtubeVideoId => {
-                    if (!youtubeVideoId) {
-                        input.removeAttribute('disabled');
-                        addButton.removeAttribute('disabled');
-                        return
-                    }
                     const videoThumbnailUrl = `https://img.youtube.com/vi/${youtubeVideoId}/mqdefault.jpg`
                     self._appendMedia(addButton, wrapper, videoThumbnailUrl, youtubeVideoId);
+                })
+                .catch((e) => {
+                    console.log(e)
+                    input.removeAttribute('disabled');
+                    addButton.removeAttribute('disabled');
                 })
 
             return
