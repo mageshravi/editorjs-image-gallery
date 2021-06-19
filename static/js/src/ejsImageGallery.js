@@ -1,9 +1,10 @@
 /**
  * ImageGallery block element for EditorJS
  */
+
 class ImageGallery {
 
-    constructor ({data}) {
+    constructor({ data }) {
         this.data = data;
         this.wrapper = undefined;
         this.cssClassnames = {
@@ -12,7 +13,11 @@ class ImageGallery {
             imageListItem: 'ejs-img-gallery__list-item',
             thumb: 'ejs-img-gallery__thumb',
             deleteIcon: 'ejs-img-gallery__delete-icon',
-            urlIp: 'ejs-img-gallery__url-ip'
+            urlIp: 'ejs-img-gallery__url-ip',
+            infoWrapper: 'ejs-img-gallery__info-wrapper',
+            infoIcon: 'ejs-img-gallery__info-icon',
+            infoText: 'ejs-img-gallery__info-text',
+            urlExample: 'ejs-img-gallery__url-example'
         }
     }
 
@@ -34,23 +39,58 @@ class ImageGallery {
         if (this.data && this.data.images) {
             // fill block with saved data
             this.data.images.forEach((img) => {
-                const li = self._createThumbnailListItem(img.url);
+                const li = self._createThumbnailListItem(img.url, img.youtubeVideoId);
                 images.appendChild(li);
             });
         }
 
         const input = document.createElement('input');
         input.classList = this.cssClassnames.urlIp;
-        input.placeholder = 'Image URL';
+        input.placeholder = 'Image/YouTube Video URL';
 
         const button = document.createElement('button');
         button.type = 'button';
         button.innerHTML = 'Add to Gallery';
         button.addEventListener('click', self._addImg.bind(self));
 
+        const infoWrapper = document.createElement('div');
+        infoWrapper.classList = this.cssClassnames.infoWrapper;
+
+        const infoIcon = document.createElement('img');
+        infoIcon.setAttribute('src', 'static/icons/info-icon.svg');
+        infoIcon.classList = this.cssClassnames.infoIcon;
+
+        const infoText = document.createElement('span');
+        infoText.innerText = 'Supported URL Formats';
+        infoText.classList = this.cssClassnames.infoText;
+
+        infoWrapper.appendChild(infoIcon);
+        infoWrapper.appendChild(infoText);
+
+        const supportedUrlFormats = [
+            'https://www.youtube.com/watch?v=-wtIMTCHWuI',
+            'https://youtu.be/-wtIMTCHWuI',
+            'https://youtu.be/dQw4w9WgXcQ?feature=youtube_gdata_player'
+        ]
+
+        supportedUrlFormats.forEach((url, idx) => {
+            const urlExample = document.createElement('p');
+            urlExample.classList = this.cssClassnames.urlExample;
+            urlExample.innerText = `${idx + 1}. ${url}`;
+            infoWrapper.appendChild(urlExample)
+        });
+
+        infoText.addEventListener('click', () => {
+            const urlExamples = document.querySelectorAll(`.${this.cssClassnames.urlExample}`);
+            urlExamples.forEach(url => {
+                url.classList.toggle(`show`);
+            })
+        })
+
         this.wrapper.appendChild(images);
         this.wrapper.appendChild(input);
         this.wrapper.appendChild(button);
+        this.wrapper.appendChild(infoWrapper);
 
         return this.wrapper;
     }
@@ -60,7 +100,13 @@ class ImageGallery {
 
         const imageUrls = [];
         imgs.forEach((img) => {
-            imageUrls.push({ url: img.getAttribute('src') })
+            const itemData = {}
+            if (img.dataset.videoId) {
+                itemData.youtubeVideoId = img.dataset.videoId
+            }
+
+            itemData.url = img.getAttribute('src')
+            imageUrls.push(itemData)
         })
 
         return {
@@ -81,10 +127,40 @@ class ImageGallery {
         input.setAttribute('disabled', true);
         addButton.setAttribute('disabled', true);
 
+        const regexPattern = new RegExp('^(http|https)(:\/\/)(www\.)?((youtube\.com)|(youtu.be))\/', 'g')
+        if (regexPattern.test(input.value.trim()) === true) {
+            const self = this;
+            const videoUrl = input.value.trim();
+
+            this._parseVideoId(videoUrl)
+                .then(youtubeVideoId => {
+                    const videoThumbnailUrl = `https://img.youtube.com/vi/${youtubeVideoId}/mqdefault.jpg`
+                    self._appendMedia(addButton, wrapper, videoThumbnailUrl, youtubeVideoId);
+                })
+                .catch((e) => {
+                    const urlExamples = document.querySelectorAll(`.${this.cssClassnames.urlExample}`);
+                    urlExamples.forEach(url => {
+                        url.classList.toggle(`show`);
+                    })
+
+                    alert(e)
+                    input.removeAttribute('disabled');
+                    addButton.removeAttribute('disabled');
+                })
+
+            return
+        }
+
+        this._appendMedia(addButton, wrapper, input.value.trim())
+
+    }
+
+    _appendMedia(addButton, wrapper, url, youtubeVideoId) {
+        const input = wrapper.querySelector(`.${this.cssClassnames.urlIp}`);
         const self = this;
-        this._isValidImageUrl(input.value)
-            .then((imgSrc) => {
-                const li = self._createThumbnailListItem(imgSrc);
+        this._isValidImageUrl(url)
+            .then((src) => {
+                const li = self._createThumbnailListItem(src, youtubeVideoId);
 
                 const ul = wrapper.querySelector(`.${self.cssClassnames.imageList}`);
                 ul.appendChild(li);
@@ -102,6 +178,32 @@ class ImageGallery {
             });
     }
 
+    _parseVideoId(url) {
+        let videoId = null
+
+        return new Promise((resolve, reject) => {
+            const a = document.createElement('a')
+            a.href = url
+
+            // eg http://youtu.be/-wtIMTCHWuI ; http://youtu.be/dQw4w9WgXcQ?feature=youtube_gdata_player
+            if (a.hostname === 'youtu.be') {
+                videoId = a.pathname.substr(1, a.pathname.length)
+                return resolve(videoId)
+            }
+
+            // for generic urls eg:- http://www.youtube.com/watch?v=-wtIMTCHWuI
+            const queryString = new URLSearchParams(a.search)
+            videoId = queryString.get('v')
+
+            // eg urls like http://www.youtube.com/watch?foo=bar
+            if (!videoId) {
+                return reject(new Error('Your YouTube URL is invalid. Please check the supported formats.'))
+            }
+
+            resolve(videoId)
+        })
+    }
+
     _isValidImageUrl(url) {
         // check if image can load
         return new Promise((resolve, reject) => {
@@ -112,11 +214,15 @@ class ImageGallery {
         });
     }
 
-    _createThumbnailListItem(thumbSrc) {
+    _createThumbnailListItem(thumbSrc, youtubeVideoId) {
         // thumb
         const img = document.createElement('img');
         img.classList = this.cssClassnames.thumb;
         img.setAttribute('src', thumbSrc);
+
+        if (youtubeVideoId) {
+            img.setAttribute('data-video-id', youtubeVideoId)
+        }
 
         // delete-icon
         const del = document.createElement('span');
@@ -145,11 +251,12 @@ class ImageGallery {
             const allListItems = [...draggedLi.parentElement.children];
             const draggedLiIndex = allListItems.indexOf(draggedLi);
             const droppedLiIndex = allListItems.indexOf(ev.currentTarget);
-            
+
             if (droppedLiIndex > draggedLiIndex) {
                 // insert after the dropped element
                 draggedLi.parentElement.insertBefore(draggedLi, ev.currentTarget.nextSibling);
-            } 
+            }
+
             if (droppedLiIndex < draggedLiIndex) {
                 // insert before the dropped element
                 draggedLi.parentElement.insertBefore(draggedLi, ev.currentTarget);

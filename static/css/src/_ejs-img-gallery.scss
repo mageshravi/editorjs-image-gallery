@@ -3,43 +3,69 @@
     margin-bottom: 1rem;
 
     &__list {
-        margin: 0;
-        padding: 0;
         display: flex;
         overflow-x: auto;
+        margin: 0;
+        padding: 0;
     }
 
     &__list-item {
-        list-style: none;
         position: relative;
+        list-style: none;
     }
 
     &__delete-icon {
-        position: absolute;
-        top: .25rem;
-        right: .25rem;
-
-        padding: .25rem .5rem;
-        font-size: 1.5rem;
-        line-height: 1.5rem;
-        font-weight: bold;
-        background-color: crimson;
-        color: white;
 
         display: inline-block;
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+
+        padding: 0.25rem 0.5rem;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+        background-color: crimson;
+        border-radius: 0.125rem;
         cursor: pointer;
-        border-radius: .125rem;
     }
 
     &__thumb {
-        margin: 1px;
+        display: inline-block;
         width: 148px;
         height: 148px;
+        margin: 1px;
         object-fit: cover;
-        display: inline-block;
     }
 
     &__url-ip {
-        margin-right: .25rem;
+        margin-right: 0.25rem;
+    }
+
+    &__info-wrapper {
+        padding: 1rem 0;
+    }
+
+    &__info-icon {
+        width: 1rem;
+        height: 1rem;
+        vertical-align: top;
+        cursor: pointer;
+        margin-inline-end: 0.5rem;
+    }
+
+    &__info-text {
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    &__url-example {
+        display: none;
+
+        &.show {
+            display: block;
+            margin: 0.5rem 0 0.5rem 1rem;
+        }
     }
 }
