@@ -9,7 +9,7 @@
     "@editorjs/header": "^2.4.0",
     "@editorjs/list": "^1.4.0",
     "autoprefixer": "^9.7.4",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "onchange": "^6.1.0",
     "postcss-cli": "^7.1.0",
     "webpack": "^4.42.0",
